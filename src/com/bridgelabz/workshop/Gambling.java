@@ -1,5 +1,9 @@
 package com.bridgelabz.workshop;
 
+import java.util.List;
+import java.util.*;
+
+
 public class Gambling {
 	public static final int STAKE = 100;
 	public static final int MAXIMUM_MATCHES_PER_DAY = 1000;
@@ -49,7 +53,7 @@ public class Gambling {
 	}
 	public void returnsPerMonth() {
 
-		int totalAmount = 0, lostAmount = 0,noOfMatches=0;
+		int totalAmount = 0,noOfMatches=0;
 		for (int i = 0; i < 30; i++) {
 			GAMBLER_STAKE = 100;
 			noOfMatches=0;
@@ -71,13 +75,61 @@ public class Gambling {
 		}
 
 	}
+	public void returnsPerMonthWithMinMaxDays() {
 
+		int totalAmount = 0,noOfMatches=0,maxAmountWon = 0,maxAmountLost = 0;
+		List<Integer> luckiestDays = new ArrayList<Integer>();
+		List<Integer> unluckiestDays = new ArrayList<Integer>();
+		
+		for (int i = 0; i < 30; i++) {
+			GAMBLER_STAKE = 100;
+			noOfMatches=0;
+			while (!this.resignStake() && noOfMatches != MAXIMUM_MATCHES_PER_DAY) {
+				noOfMatches++;
+			}
+			int amountAfterPlay = (GAMBLER_STAKE-STAKE);
+			if (amountAfterPlay== maxAmountWon) {
+				luckiestDays.add(i+1);
+			} else if (amountAfterPlay>maxAmountWon){
+				maxAmountWon = amountAfterPlay;
+				luckiestDays.clear();
+				luckiestDays.add(i+1);
+			}
+			if (amountAfterPlay== maxAmountLost) {
+				unluckiestDays.add(i+1);
+			} else if (amountAfterPlay<maxAmountLost){
+				maxAmountLost = amountAfterPlay;
+				unluckiestDays.clear();
+				unluckiestDays.add(i+1);
+			}
+			totalAmount += amountAfterPlay;
+			if(amountAfterPlay>0) {
+				System.out.println("Day "+(i+1)+": PROFIT \t- "+amountAfterPlay);
+				} else {
+					System.out.println("Day "+(i+1)+": LOSS \t- "+Math.abs(amountAfterPlay));
+				}
+		}
+		if(totalAmount>0) {
+		System.out.println("\nNet Gain (per month): $"+totalAmount);
+		} else {
+			System.out.println("\nNet Loss (per month): $"+Math.abs(totalAmount));
+		}
+		System.out.print("\nLucky days: ");
+		for(int i=0;i<luckiestDays.size();i++) {
+			System.out.print(luckiestDays.get(i)+" ");
+		}
+		System.out.println("");
+		System.out.print("Unlucky days: ");
+		for(int i=0;i<unluckiestDays.size();i++) {
+			System.out.print(unluckiestDays.get(i)+" ");
+		}
+	}
 	public static void main(String[] args) {
 		System.out.println("Welcome to Gambling Simulation!");
 		Gambling gambler = new Gambling();
 		System.out.println("Stake:" + gambler.STAKE);
 		System.out.println("Per day betting price:" + gambler.DAY_BETTING_PRICE);
-		gambler.returnsPerMonth();
+		gambler.returnsPerMonthWithMinMaxDays();
 
 	}
 }
